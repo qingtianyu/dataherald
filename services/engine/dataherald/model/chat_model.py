@@ -1,6 +1,6 @@
 from typing import Any
 
-from langchain_community.chat_models import ChatAnthropic, ChatCohere, ChatGooglePalm
+from langchain_community.chat_models import ChatAnthropic, ChatCohere, ChatGooglePalm, ChatTongyi
 from langchain_openai import AzureChatOpenAI, ChatOpenAI
 from overrides import override
 
@@ -17,7 +17,7 @@ class ChatModel(LLMModel):
         self,
         database_connection: DatabaseConnection,
         model_family="openai",
-        model_name="gpt-4-turbo-preview",
+        model_name="gpt-4o",
         api_base: str | None = None,
         **kwargs: Any
     ) -> Any:
@@ -49,6 +49,10 @@ class ChatModel(LLMModel):
         if model_family == "google":
             return ChatGooglePalm(
                 model_name=model_name, google_api_key=api_key, **kwargs
+            )
+        if model_family == "tongyi":
+            return ChatTongyi(
+                model_name=model_name, dashscope_api_key=api_key, **kwargs
             )
         if model_family == "cohere":
             return ChatCohere(model_name=model_name, cohere_api_key=api_key, **kwargs)

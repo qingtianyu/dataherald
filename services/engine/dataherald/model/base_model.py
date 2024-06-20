@@ -1,7 +1,7 @@
 import os
 from typing import Any
 
-from langchain.llms import AlephAlpha, Anthropic, AzureOpenAI, Cohere, OpenAI
+from langchain.llms import AlephAlpha, Anthropic, AzureOpenAI, Cohere, OpenAI, Tongyi
 from overrides import override
 
 from dataherald.model import LLMModel
@@ -17,6 +17,7 @@ class BaseModel(LLMModel):
         self.anthropic_api_key = os.environ.get("ANTHROPIC_API_KEY")
         self.cohere_api_key = os.environ.get("COHERE_API_KEY")
         self.azure_api_key = os.environ.get("AZURE_API_KEY")
+        self.dashscope_api_key = os.environ.get("DASHSCOPE_API_KEY")
 
     @override
     def get_model(  # noqa: C901
@@ -40,6 +41,8 @@ class BaseModel(LLMModel):
                 self.google_api_key = api_key
             elif model_family == "azure":
                 self.azure_api_key = api_key
+            elif model_family == "tongyi":
+                self.dashscope_api_key = api_key
         if self.openai_api_key:
             self.model = OpenAI(model_name=model_name, **kwargs)
         elif self.aleph_alpha_api_key:
@@ -50,6 +53,8 @@ class BaseModel(LLMModel):
             self.model = Cohere(model=model_name, **kwargs)
         elif self.azure_api_key:
             self.model = AzureOpenAI(model=model_name, **kwargs)
+        elif self.dashscope_api_key:
+            self.model = Tongyi(model=model_name, **kwargs)
         else:
             raise ValueError("No valid API key environment variable found")
         return self.model

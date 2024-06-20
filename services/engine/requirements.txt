@@ -44,3 +44,4 @@ clickhouse-sqlalchemy==0.2.5
 astrapy==0.7.6
 pymssql==2.2.11
 sqlalchemy-redshift==0.8.14
+dashscope==0.1.1
