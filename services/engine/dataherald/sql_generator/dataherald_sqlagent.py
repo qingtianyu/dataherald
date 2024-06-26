@@ -58,7 +58,7 @@ logger = logging.getLogger(__name__)
 
 
 TOP_K = SQLGenerator.get_upper_bound_limit()
-EMBEDDING_MODEL = "text-embedding-3-large"
+EMBEDDING_MODEL = os.environ.get("EMBEDDING_MODEL","text-embedding-3-large")
 TOP_TABLES = 20
 
 
@@ -147,7 +147,7 @@ class QuerySQLDataBaseTool(BaseSQLDatabaseTool, BaseTool):
 
     name = "SqlDbQuery"
     description = """
-    Input: A well-formed multi-line SQL query between ```sql and ``` tags.
+    Input: -- A well-formed multi-line SQL query between ```sql and ``` tags.
     Output: Result from the database or an error message if the query is incorrect.
     If an error occurs, rewrite the query and retry.
     Use this tool to execute SQL queries.
@@ -294,8 +294,8 @@ class TablesSQLDatabaseTool(BaseSQLDatabaseTool, BaseTool):
         df["similarities"] = df.table_embedding.apply(
             lambda x: self.cosine_similarity(x, question_embedding)
         )
-        df = df.sort_values(by="similarities", ascending=True)
-        df = df.tail(TOP_TABLES)
+        df = df.sort_values(by="similarities", ascending=False)
+        df = df.head(TOP_TABLES)
         most_similar_tables = self.similar_tables_based_on_few_shot_examples(df)
         table_relevance = ""
         for _, row in df.iterrows():
@@ -655,8 +655,9 @@ class DataheraldSQLAgent(SQLGenerator):
         input_variables: List[str] | None = None,
         max_examples: int = 20,
         number_of_instructions: int = 1,
-        max_iterations: int
-        | None = int(os.getenv("AGENT_MAX_ITERATIONS", "15")),  # noqa: B008
+        max_iterations: int | None = int(
+            os.getenv("AGENT_MAX_ITERATIONS", "15")
+        ),  # noqa: B008
         max_execution_time: float | None = None,
         early_stopping_method: str = "generate",
         verbose: bool = False,

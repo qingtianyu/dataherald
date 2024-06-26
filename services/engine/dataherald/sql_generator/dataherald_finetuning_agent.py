@@ -58,7 +58,7 @@ logger = logging.getLogger(__name__)
 
 
 TOP_K = SQLGenerator.get_upper_bound_limit()
-EMBEDDING_MODEL = "text-embedding-3-large"
+EMBEDDING_MODEL = os.environ.get("EMBEDDING_MODEL","text-embedding-3-large")
 TOP_TABLES = 20
 
 
@@ -493,8 +493,9 @@ class DataheraldFinetuningAgent(SQLGenerator):
         suffix: str = FINETUNING_AGENT_SUFFIX,
         format_instructions: str = FORMAT_INSTRUCTIONS,
         input_variables: List[str] | None = None,
-        max_iterations: int
-        | None = int(os.getenv("AGENT_MAX_ITERATIONS", "12")),  # noqa: B008
+        max_iterations: int | None = int(
+            os.getenv("AGENT_MAX_ITERATIONS", "12")
+        ),  # noqa: B008
         max_execution_time: float | None = None,
         early_stopping_method: str = "generate",
         verbose: bool = False,

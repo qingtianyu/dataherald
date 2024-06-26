@@ -25,7 +25,7 @@ from dataherald.utils.agent_prompts import FINETUNING_SYSTEM_INFORMATION
 from dataherald.utils.models_context_window import OPENAI_FINETUNING_MODELS_WINDOW_SIZES
 
 FILE_PROCESSING_ATTEMPTS = 20
-EMBEDDING_MODEL = "text-embedding-3-large"
+EMBEDDING_MODEL = os.environ.get("EMBEDDING_MODEL","text-embedding-3-large")
 CATEGORICAL_COLUMNS_THRESHOLD = 60
 
 logger = logging.getLogger(__name__)
@@ -298,13 +298,15 @@ class OpenAIFineTuning(FinetuningModel):
             finetuning_request = self.client.fine_tuning.jobs.create(
                 training_file=model.finetuning_file_id,
                 model=model.base_llm.model_name,
-                hyperparameters=model.base_llm.model_parameters
-                if model.base_llm.model_parameters
-                else {
-                    "batch_size": 1,
-                    "learning_rate_multiplier": "auto",
-                    "n_epochs": 3,
-                },
+                hyperparameters=(
+                    model.base_llm.model_parameters
+                    if model.base_llm.model_parameters
+                    else {
+                        "batch_size": 1,
+                        "learning_rate_multiplier": "auto",
+                        "n_epochs": 3,
+                    }
+                ),
             )
             model.finetuning_job_id = finetuning_request.id
             if finetuning_request.status == "failed":
