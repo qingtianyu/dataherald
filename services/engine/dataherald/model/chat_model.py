@@ -1,11 +1,13 @@
 from typing import Any
 
 from langchain_community.chat_models import ChatAnthropic, ChatCohere, ChatGooglePalm, ChatTongyi
+from langchain_community.llms import Tongyi
 from langchain_openai import AzureChatOpenAI, ChatOpenAI
 from overrides import override
 
 from dataherald.model import LLMModel
 from dataherald.sql_database.models.types import DatabaseConnection
+import os
 
 
 class ChatModel(LLMModel):
@@ -16,8 +18,11 @@ class ChatModel(LLMModel):
     def get_model(
         self,
         database_connection: DatabaseConnection,
-        model_family="openai",
-        model_name="gpt-4o",
+        model_family=os.getenv('MODEL_FAMILY'),
+        model_name=os.getenv('MODEL_NAME'),
+        # model_family="openai",
+        # model_name="gpt-4o",
+        # model_family="tongyi",
         api_base: str | None = None,
         **kwargs: Any
     ) -> Any:
@@ -39,7 +44,7 @@ class ChatModel(LLMModel):
                 model_name=model_name,
                 openai_api_key=api_key,
                 openai_api_base=api_base,
-                seed=0,
+                # seed=0,
                 **kwargs
             )
         if model_family == "anthropic":
@@ -51,9 +56,7 @@ class ChatModel(LLMModel):
                 model_name=model_name, google_api_key=api_key, **kwargs
             )
         if model_family == "tongyi":
-            return ChatTongyi(
-                model_name=model_name, dashscope_api_key=api_key, **kwargs
-            )
+            return ChatTongyi(model_name=model_name, **kwargs)
         if model_family == "cohere":
             return ChatCohere(model_name=model_name, cohere_api_key=api_key, **kwargs)
         raise ValueError("No valid API key environment variable found")

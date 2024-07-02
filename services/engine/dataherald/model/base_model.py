@@ -1,7 +1,7 @@
 import os
 from typing import Any
 
-from langchain.llms import AlephAlpha, Anthropic, AzureOpenAI, Cohere, OpenAI, Tongyi
+from langchain_community.llms import AlephAlpha, Anthropic, AzureOpenAI, Cohere, OpenAI, Tongyi
 from overrides import override
 
 from dataherald.model import LLMModel
