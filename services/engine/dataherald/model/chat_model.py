@@ -20,9 +20,8 @@ class ChatModel(LLMModel):
         database_connection: DatabaseConnection,
         model_family=os.getenv('MODEL_FAMILY'),
         model_name=os.getenv('MODEL_NAME'),
-        # model_family="openai",
-        # model_name="gpt-4o",
-        # model_family="tongyi",
+        model_family="openai",
+        model_name="gpt-4o",
         api_base: str | None = None,
         **kwargs: Any
     ) -> Any:
